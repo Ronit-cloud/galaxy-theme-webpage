@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tell us about yourself</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --space: #05030f;
+  --deep: #0d0720;
+  --violet: #8b5cf6;
+  --violet-soft: #c4b5fd;
+  --glow: rgba(139, 92, 246, 0.45);
+  --text: #ece8ff;
+  --muted: #9a92b8;
+  --danger: #ff8fa3;
+  --head: "Syne", "Trebuchet MS", sans-serif;
+  --body: "Manrope", "Segoe UI", system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--body);
+  color: var(--text);
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 10%, rgba(109, 40, 217, 0.28), transparent 60%),
+    radial-gradient(ellipse 60% 45% at 90% 85%, rgba(88, 28, 135, 0.35), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 70% 20%, rgba(59, 7, 100, 0.25), transparent 65%),
+    var(--space);
+  background-attachment: fixed;
+  overflow-x: hidden;
+  padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0);
+}
+#stars { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+main {
+  position: relative; z-index: 1;
+  min-height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px 16px;
+}
+.card {
+  width: 100%; max-width: 520px;
+  padding: 36px 32px 28px;
+  border-radius: 22px;
+  background: linear-gradient(160deg, rgba(30, 16, 64, 0.72), rgba(10, 6, 26, 0.82));
+  border: 1px solid rgba(167, 139, 250, 0.28);
+  box-shadow: 0 0 60px -10px var(--glow), 0 30px 80px -30px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.progress { height: 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.08); overflow: hidden; margin-bottom: 10px; }
+.progress > i { display: block; height: 100%; width: 0; border-radius: 4px; background: linear-gradient(90deg, #6d28d9, #c4b5fd); transition: width .4s ease; }
+.count { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+
+h1 {
+  font-family: var(--head); font-weight: 800;
+  font-size: clamp(26px, 6vw, 34px); line-height: 1.15; letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.hint { color: var(--muted); font-size: 15px; margin-bottom: 22px; line-height: 1.5; }
+
+.field { position: relative; }
+input[type=text], input[type=number], input[type=email], input[type=tel] {
+  width: 100%; font: inherit; font-size: 18px; color: var(--text);
+  padding: 14px 16px; border-radius: 12px;
+  background: rgba(8, 4, 22, 0.7);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  outline: none; transition: border-color .2s, box-shadow .2s;
+}
+input::placeholder { color: #6d6590; }
+input:focus-visible { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3); }
+input[type=number] { -moz-appearance: textfield; }
+input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+.unit { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 15px; pointer-events: none; }
+.field.has-unit input { padding-right: 56px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.chip {
+  font: inherit; font-size: 16px; color: var(--text); cursor: pointer;
+  padding: 11px 18px; border-radius: 999px;
+  background: rgba(8, 4, 22, 0.7); border: 1px solid rgba(167, 139, 250, 0.3);
+  transition: background .2s, border-color .2s, box-shadow .2s;
+}
+.chip:hover { border-color: var(--violet-soft); }
+.chip[aria-pressed=true] { background: rgba(139, 92, 246, 0.35); border-color: var(--violet-soft); box-shadow: 0 0 18px -4px var(--glow); }
+.chip:focus-visible, .btn:focus-visible { outline: 2px solid var(--violet-soft); outline-offset: 2px; }
+
+.error { color: var(--danger); font-size: 14px; min-height: 20px; margin-top: 10px; }
+
+.actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 18px; }
+.btn { font: inherit; font-weight: 600; font-size: 16px; cursor: pointer; border-radius: 12px; padding: 13px 24px; border: 1px solid transparent; transition: transform .15s, box-shadow .2s, background .2s, opacity .2s; }
+.btn.primary { color: #fff; background: linear-gradient(135deg, #7c3aed, #a855f7); box-shadow: 0 8px 28px -8px var(--glow); }
+.btn.primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 12px 32px -8px var(--glow); }
+.btn.primary.skip { background: transparent; color: var(--violet-soft); border-color: rgba(167, 139, 250, 0.45); box-shadow: none; }
+.btn.ghost { color: var(--muted); background: transparent; padding-left: 4px; padding-right: 4px; }
+.btn.ghost:hover { color: var(--text); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn[hidden] { display: none; }
+
+.summary { list-style: none; padding: 0; margin: 4px 0 4px; display: grid; gap: 10px; }
+.summary li { display: flex; justify-content: space-between; gap: 16px; padding: 12px 14px; border-radius: 12px; background: rgba(8, 4, 22, 0.6); border: 1px solid rgba(167, 139, 250, 0.18); font-size: 15px; }
+.summary li span:first-child { color: var(--muted); flex-shrink: 0; }
+.summary li span:last-child { text-align: right; overflow-wrap: anywhere; }
+.summary li.skipped span:last-child { color: #6d6590; font-style: italic; }
+
+.done-mark { width: 64px; height: 64px; margin-bottom: 18px; border-radius: 50%; display: grid; place-items: center; background: rgba(139, 92, 246, 0.2); border: 1px solid var(--violet-soft); box-shadow: 0 0 36px -4px var(--glow); }
+.done-mark svg { width: 30px; height: 30px; stroke: var(--violet-soft); }
+
+.step { animation: enter .35s ease both; }
+@keyframes enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .step { animation: none; }
+  .progress > i, .btn, .chip { transition: none; }
+}
+@media (max-width: 480px) { .card { padding: 28px 20px 22px; } }
+</style>
+</head>
+<body>
+<canvas id="stars" aria-hidden="true"></canvas>
+
+<main>
+  <section class="card" aria-live="polite">
+    <div class="progress" role="progressbar" aria-label="Progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="bar"></i></div>
+    <p class="count" id="count"></p>
+    <div id="view"></div>
+  </section>
+</main>
+
+<script>
+/* ---------- Star field ---------- */
+(function () {
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let stars = [], w = 0, h = 0, dpr = 1;
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = window.innerWidth; h = window.innerHeight;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.round((w * h) / 4500);
+    stars = Array.from({ length: n }, () => {
+      const big = Math.random() < 0.08;
+      return {
+        x: Math.random() * w, y: Math.random() * h,
+        r: big ? Math.random() * 1.2 + 1.1 : Math.random() * 0.9 + 0.3,
+        base: Math.random() * 0.5 + 0.35,
+        speed: Math.random() * 0.02 + 0.005,
+        phase: Math.random() * Math.PI * 2,
+        tint: Math.random() < 0.3 ? '196,181,253' : '255,255,255'
+      };
+    });
+  }
+  function draw(t) {
+    ctx.clearRect(0, 0, w, h);
+    for (const s of stars) {
+      const a = reduce ? s.base : s.base + Math.sin(t * s.speed * 0.06 + s.phase) * 0.35;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(' + s.tint + ',' + Math.max(0.08, Math.min(1, a)) + ')';
+      if (s.r > 1.2) { ctx.shadowColor = 'rgba(196,181,253,0.9)'; ctx.shadowBlur = 8; } else { ctx.shadowBlur = 0; }
+      ctx.fill();
+    }
+    if (!reduce) requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize', () => { resize(); if (reduce) draw(0); });
+  resize();
+  requestAnimationFrame(draw);
+})();
+
+/* ---------- Survey ---------- */
+// ===== EDIT THIS when the page is hosted on S3 =====
+// Put your backend address here, with no trailing slash, e.g. 'http://13.236.10.20'
+// Leave it as '' when the backend serves this page itself (local run or Docker).
+const API_URL = 'http://54.79.124.164';
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_RE = /^\+?[\d\s\-().]{7,20}$/;
+
+const steps = [
+  { key: 'name', label: 'What should we call you?', hint: 'Your name, nickname, anything goes.', type: 'text', ac: 'name', ph: 'Your name', max: 100 },
+  { key: 'age', label: 'How old are you?', hint: 'Whole years.', type: 'number', ac: 'off', ph: 'Age', min: 1, max: 120 },
+  { key: 'gender', label: 'How do you identify?', hint: 'Pick one, or skip.', type: 'choice', options: ['Male', 'Female', 'Non-binary', 'Prefer not to say'] },
+  { key: 'height', label: 'How tall are you?', hint: 'In centimetres.', type: 'number', ac: 'off', ph: 'Height', unit: 'cm', min: 30, max: 272 },
+  { key: 'email', label: "What's your email address?", hint: "We'll only store it with your answers.", type: 'email', ac: 'email', ph: 'you@example.com', max: 254 },
+  { key: 'phoneNumber', label: "What's your phone number?", hint: 'Include the country code if you like.', type: 'tel', ac: 'tel', ph: '+1 555 123 4567' },
+  { key: 'hobby', label: 'What do you love doing in your free time?', hint: 'Stargazing counts.', type: 'text', ac: 'off', ph: 'Your hobby', max: 200 }
+];
+const labels = { name: 'Name', age: 'Age', gender: 'Gender', height: 'Height', email: 'Email', phoneNumber: 'Phone', hobby: 'Hobby' };
+
+const view = document.getElementById('view');
+const bar = document.getElementById('bar');
+const count = document.getElementById('count');
+const progress = document.querySelector('.progress');
+
+const answers = {};
+let index = 0;
+
+function el(tag, props, ...kids) {
+  const node = document.createElement(tag);
+  Object.entries(props || {}).forEach(([k, v]) => {
+    if (k === 'class') node.className = v;
+    else if (k === 'text') node.textContent = v;
+    else if (k.startsWith('on')) node.addEventListener(k.slice(2), v);
+    else node.setAttribute(k, v);
+  });
+  kids.flat().forEach(k => k && node.append(k));
+  return node;
+}
+
+function setProgress(pct, text) {
+  bar.style.width = pct + '%';
+  progress.setAttribute('aria-valuenow', Math.round(pct));
+  count.textContent = text;
+}
+
+function validate(step, raw) {
+  const v = String(raw || '').trim();
+  if (!v) return '';
+  if (step.key === 'age') {
+    const n = Number(v);
+    if (!Number.isInteger(n) || n < step.min || n > step.max) return 'Enter a whole number between 1 and 120, or skip.';
+  }
+  if (step.key === 'height') {
+    const n = Number(v);
+    if (!Number.isFinite(n) || n < step.min || n > step.max) return 'Enter a height between 30 and 272 cm, or skip.';
+  }
+  if (step.key === 'email' && !EMAIL_RE.test(v)) return 'That email address looks incomplete. Fix it or skip.';
+  if (step.key === 'phoneNumber' && !PHONE_RE.test(v)) return 'Use 7 to 20 digits (spaces, +, - and brackets are fine), or skip.';
+  return '';
+}
+
+function renderQuestion() {
+  const step = steps[index];
+  setProgress((index / steps.length) * 100, 'Question ' + (index + 1) + ' of ' + steps.length + ' · all optional');
+
+  const err = el('p', { class: 'error', id: 'err', role: 'alert' });
+  const next = el('button', { class: 'btn primary skip', type: 'button' });
+  const isLast = index === steps.length - 1;
+  let control;
+  let current = answers[step.key] || '';
+
+  function refreshButton() {
+    next.textContent = current ? (isLast ? 'Review' : 'Next') : 'Skip';
+    next.classList.toggle('skip', !current);
+  }
+
+  function go() {
+    const msg = validate(step, current);
+    if (msg) { err.textContent = msg; return; }
+    const v = String(current).trim();
+    if (v) answers[step.key] = v; else delete answers[step.key];
+    if (isLast) renderSummary(); else { index++; renderQuestion(); }
+  }
+
+  if (step.type === 'choice') {
+    control = el('div', { class: 'chips', role: 'group', 'aria-label': step.label });
+    step.options.forEach(opt => {
+      const chip = el('button', { class: 'chip', type: 'button', 'aria-pressed': String(current === opt), text: opt });
+      chip.addEventListener('click', () => {
+        current = current === opt ? '' : opt;
+        control.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c.textContent === current)));
+        err.textContent = '';
+        refreshButton();
+      });
+      control.append(chip);
+    });
+  } else {
+    const attrs = { type: step.type, id: 'q', placeholder: step.ph, autocomplete: step.ac, 'aria-describedby': 'err', 'aria-label': step.label };
+    if (step.type === 'number') { attrs.inputmode = step.key === 'height' ? 'decimal' : 'numeric'; attrs.min = step.min; attrs.max = step.max; if (step.key === 'height') attrs.step = 'any'; }
+    if (step.type === 'tel') attrs.inputmode = 'tel';
+    if (step.max && step.type !== 'number') attrs.maxlength = step.max;
+    const input = el('input', attrs);
+    input.value = current;
+    input.addEventListener('input', () => { current = input.value; err.textContent = ''; refreshButton(); });
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go(); } });
+    control = el('div', { class: 'field' + (step.unit ? ' has-unit' : '') }, input, step.unit ? el('span', { class: 'unit', text: step.unit }) : null);
+    setTimeout(() => input.focus({ preventScroll: true }), 50);
+  }
+
+  const back = el('button', { class: 'btn ghost', type: 'button', text: 'Back', onclick: () => { if (index > 0) { index--; renderQuestion(); } } });
+  if (index === 0) back.hidden = true;
+  next.addEventListener('click', go);
+
+  view.replaceChildren(el('div', { class: 'step' },
+    el('h1', { text: step.label }),
+    el('p', { class: 'hint', text: step.hint }),
+    control, err,
+    el('div', { class: 'actions' }, back, next)
+  ));
+  refreshButton();
+}
+
+function renderSummary() {
+  setProgress(100, 'Last step');
+  const keys = Object.keys(labels);
+  const hasAny = Object.keys(answers).length > 0;
+
+  const list = el('ul', { class: 'summary' }, keys.map(k => {
+    const val = answers[k];
+    let shown = val || 'Skipped';
+    if (val && k === 'height') shown = val + ' cm';
+    return el('li', { class: val ? '' : 'skipped' }, el('span', { text: labels[k] }), el('span', { text: shown }));
+  }));
+
+  const err = el('p', { class: 'error', role: 'alert', text: hasAny ? '' : 'You skipped every question. Go back and answer at least one to save.' });
+  const save = el('button', { class: 'btn primary', type: 'button', text: 'Save my answers' });
+  if (!hasAny) save.disabled = true;
+
+  save.addEventListener('click', async () => {
+    save.disabled = true; save.textContent = 'Saving...'; err.textContent = '';
+    try {
+      const res = await fetch(API_URL + '/api/responses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(answers)
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error((data.errors && data.errors.join(' ')) || 'Something went wrong.');
+      renderDone();
+    } catch (e) {
+      err.textContent = e.message === 'Failed to fetch' ? 'Could not reach the server. Check that it is running, then try again.' : e.message;
+      save.disabled = false; save.textContent = 'Save my answers';
+    }
+  });
+
+  const back = el('button', { class: 'btn ghost', type: 'button', text: 'Back', onclick: () => { index = steps.length - 1; renderQuestion(); } });
+
+  view.replaceChildren(el('div', { class: 'step' },
+    el('h1', { text: 'Ready to save?' }),
+    el('p', { class: 'hint', text: 'Check your answers. Skipped questions are not stored.' }),
+    list, err,
+    el('div', { class: 'actions' }, back, save)
+  ));
+}
+
+function renderDone() {
+  setProgress(100, 'Saved');
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('fill', 'none'); svg.setAttribute('stroke-width', '2.2');
+  svg.setAttribute('stroke-linecap', 'round'); svg.setAttribute('stroke-linejoin', 'round');
+  const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  p.setAttribute('d', 'M5 12.5l4.5 4.5L19 7.5');
+  svg.append(p);
+
+  const again = el('button', { class: 'btn primary', type: 'button', text: 'Answer again', onclick: () => {
+    Object.keys(answers).forEach(k => delete answers[k]); index = 0; renderQuestion();
+  } });
+
+  view.replaceChildren(el('div', { class: 'step' },
+    el('div', { class: 'done-mark' }, svg),
+    el('h1', { text: 'Your answers are saved' }),
+    el('p', { class: 'hint', text: 'Thanks for taking part.' }),
+    el('div', { class: 'actions' }, el('span'), again)
+  ));
+}
+
+renderQuestion();
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+services:
+  galaxy-survey:
+    build: .
+    image: galaxy-survey:latest
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    restart: unless-stopped
