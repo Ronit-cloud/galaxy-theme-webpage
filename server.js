@@ -23,7 +23,9 @@ const db = DynamoDBDocumentClient.from(client, {
 });
 
 const app = express();
-app.use(cors({ origin: 'http://ruru-bucket.s3-website-ap-southeast-2.amazonaws.com' }));
+const allowed = (process.env.ALLOWED_ORIGIN || '')
+  .split(',').map((o) => o.trim().replace(/\/$/, '')).filter(Boolean);
+app.use(cors(allowed.length ? { origin: allowed } : undefined));
 app.use(express.json({ limit: '10kb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
